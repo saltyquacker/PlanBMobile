@@ -61,6 +61,7 @@
     <Compile Include="Assets\Scripts\BuildingHandler.cs" />
     <Compile Include="Assets\Scripts\EnemyMovement.cs" />
     <Compile Include="Assets\Scripts\EnemyHandler.cs" />
+    <Compile Include="Assets\Scripts\ScoreHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

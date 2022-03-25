@@ -16,14 +16,20 @@ public class EnemyMovement : MonoBehaviour
 
     private SpriteRenderer renderer;
 
+    private GameObject scoreHandler;
+    private ScoreHandler scoreScript;
+
+    private int scoreIncrement = 1;
     private void Start()
     {
+        scoreHandler = GameObject.Find("ScoreHandler");
         if(this.gameObject.name == "BigEnemy(Clone)")
         {
             //Larger bee slows down, has more health
             health = 5;
             xspeed = -0.2f;
             speed = 2;
+            scoreIncrement = 5;
         }
         renderer = this.gameObject.GetComponent<SpriteRenderer>();
        
@@ -85,6 +91,8 @@ public class EnemyMovement : MonoBehaviour
     }
     private void DestroyMe()
     {
+        scoreScript = scoreHandler.GetComponent<ScoreHandler>();
+        scoreScript.AddScore(scoreIncrement);
         Destroy(this.gameObject);
     }
 }
