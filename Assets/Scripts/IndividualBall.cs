@@ -30,7 +30,11 @@ public class IndividualBall : MonoBehaviour
             anim.enabled = true;
             anim.Play("BalloonWiggle");
         }
-       
+
+        if (this.gameObject.transform.position.y < -7f)
+        {
+            DestroyOldBall();
+        }
     }
 
     //Destroy Ball after certain amount of time

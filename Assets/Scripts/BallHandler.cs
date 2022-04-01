@@ -8,14 +8,18 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 public class BallHandler : MonoBehaviour
 {
     [SerializeField] private GameObject ballPrefab;
+    [SerializeField] private GameObject pivotObject;
     [SerializeField] private Rigidbody2D pivot;
     [SerializeField] private float detachDelay;
     [SerializeField] private float respawnDelay;
  
 
     private Rigidbody2D currentBallRigidbody;
+    private CircleCollider2D currentBallCollider;
     private SpringJoint2D currentBallSprintJoint;
 
+    [SerializeField]private GameObject lineObject;
+    private LineRenderer linerenderer;
     private Camera mainCamera;
     private bool isDragging;
 
@@ -23,7 +27,7 @@ public class BallHandler : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
-
+        linerenderer = lineObject.GetComponent<LineRenderer>();
         SpawnNewBall();
     }
 
@@ -46,14 +50,19 @@ public class BallHandler : MonoBehaviour
         {
             if (isDragging)
             {
+                currentBallCollider.enabled = true;
+                currentBallRigidbody.constraints = RigidbodyConstraints2D.None;
                 LaunchBall();
+                linerenderer.SetPosition(0, new Vector3(0f, 0f, 0f));
+                linerenderer.SetPosition(1, new Vector3(0f, 0f, 0f));
             }
 
             isDragging = false;
 
             return;
         }
-
+      
+           
         isDragging = true;
         currentBallRigidbody.isKinematic = true;
 
@@ -67,8 +76,22 @@ public class BallHandler : MonoBehaviour
         touchPosition /= Touch.activeTouches.Count;
 
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
+        if (worldPosition.x < pivotObject.transform.position.x)
+        {
+            
+            currentBallRigidbody.position = worldPosition;
+            currentBallRigidbody.constraints = RigidbodyConstraints2D.None;
 
-        currentBallRigidbody.position = worldPosition;
+            linerenderer.SetPosition(0, new Vector3(pivotObject.transform.position.x, pivotObject.transform.position.y, 0f));
+            linerenderer.SetPosition(1, new Vector3(currentBallRigidbody.position.x, currentBallRigidbody.position.y, 0f));
+
+        }
+        else
+        {
+            currentBallRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+            
+        }
+
     }
 
     private void SpawnNewBall()
@@ -77,7 +100,9 @@ public class BallHandler : MonoBehaviour
 
         currentBallRigidbody = ballInstance.GetComponent<Rigidbody2D>();
         currentBallSprintJoint = ballInstance.GetComponent<SpringJoint2D>();
+        currentBallCollider = ballInstance.GetComponent<CircleCollider2D>();
 
+        currentBallCollider.enabled = false;
         currentBallSprintJoint.connectedBody = pivot;
     }
 
@@ -97,6 +122,7 @@ public class BallHandler : MonoBehaviour
         Invoke(nameof(SpawnNewBall), respawnDelay);
     }
 
+ 
 
  
 }

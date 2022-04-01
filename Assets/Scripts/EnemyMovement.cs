@@ -14,6 +14,10 @@ public class EnemyMovement : MonoBehaviour
 
     [SerializeField]private int health = 1;
 
+    [SerializeField] private GameObject pivot;
+
+    [SerializeField] private GameObject dialogHandler;
+    [SerializeField] private DialogHandler dialogscript;
     private SpriteRenderer renderer;
 
     private GameObject scoreHandler;
@@ -22,6 +26,9 @@ public class EnemyMovement : MonoBehaviour
     private int scoreIncrement = 1;
     private void Start()
     {
+        pivot = GameObject.Find("Pivot");
+        dialogHandler = GameObject.Find("DialogHandler");
+        dialogscript = dialogHandler.GetComponent<DialogHandler>();
         scoreHandler = GameObject.Find("ScoreHandler");
         if(this.gameObject.name == "BigEnemy(Clone)")
         {
@@ -51,6 +58,14 @@ public class EnemyMovement : MonoBehaviour
         {
             DestroyMe();
         }
+
+        //If bee at any point reaches the sling shot
+        if (transform.position.x < pivot.transform.position.x)
+        {
+            dialogscript.enabled=true;
+            dialogscript.lose = true;
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -79,12 +94,12 @@ public class EnemyMovement : MonoBehaviour
         //Debug.Log("Made it");
         for(int i = 0; i < 5; i++)
         {
-            renderer.color = new Color(0.8207547f, 0.5111774f, 0.003871494f, 0.5f);
+            renderer.color = new Color(1f, 0.9542816f, 0.7028302f, 0.5f);
             yield return new WaitForSeconds(0.1f);
-            renderer.color = new Color(0.8207547f, 0.5111774f, 0.003871494f, 0.75f);
+            renderer.color = new Color(1f, 0.9542816f, 0.7028302f, 0.75f);
             yield return new WaitForSeconds(0.1f);
         }
-        renderer.color = new Color(0.8207547f, 0.5111774f, 0.003871494f, 1f);
+        renderer.color = new Color(1f, 0.9542816f, 0.7028302f, 1f);
 
 
 
@@ -93,6 +108,7 @@ public class EnemyMovement : MonoBehaviour
     {
         scoreScript = scoreHandler.GetComponent<ScoreHandler>();
         scoreScript.AddScore(scoreIncrement);
+        scoreScript.SubBee();
         Destroy(this.gameObject);
     }
 }
